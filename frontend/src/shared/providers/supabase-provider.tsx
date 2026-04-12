@@ -21,13 +21,16 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // onAuthStateChange fires INITIAL_SESSION immediately on subscribe —
+    // no separate getSession() call needed, which avoids a race condition
+    // where a SIGNED_OUT event could land between getSession() and subscribe.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
-      setIsLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      if (event === "INITIAL_SESSION") {
+        setIsLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
