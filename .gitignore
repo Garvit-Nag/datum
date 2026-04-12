@@ -1,0 +1,68 @@
+# Environment variables — never commit secrets
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+.coverage
+htmlcov/
+
+# Poetry — lock file IS committed for reproducibility
+# pyproject.toml and poetry.lock are tracked
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+*.pid
+
+# Uploaded files (uploads happen to Supabase Storage, not local disk)
+uploads/
+tmp/
+
+# Claude Code internals — not part of the submission
+.claude/
+CLAUDE.md
+docs/
+KPiTech_AI_Project_Brief_Garvit_v3.docx
+
+# MSA source document — uploaded to Supabase Storage at demo time, not committed
+"Atlassian Customer Agreement (Oct' 2025).pdf"

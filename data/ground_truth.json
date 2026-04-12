@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "question": "When is an invoice due after it is issued?",
+    "expected_answer": "Payment terms are specified in the applicable Order. For excess use of Software Products identified during a license audit, Customer must pay Atlassian promptly after invoice receipt. Subscription fees are governed by the Order terms, and renewals are billed at Atlassian's then-current rates."
+  },
+  {
+    "id": 2,
+    "question": "Is there a penalty for late payment, and what is the rate?",
+    "expected_answer": "No interest rate is specified for late payments. However, if payment is overdue, Atlassian may suspend Customer's rights to use Products or receive Support or Advisory Services after giving Customer no fewer than ten (10) days' written notice of the overdue payment."
+  },
+  {
+    "id": 3,
+    "question": "What remedy is available to the Customer if Atlassian fails to meet a Performance Warranty?",
+    "expected_answer": "If Atlassian breaches a Performance Warranty and Customer makes a reasonably detailed warranty claim within 30 days of discovering the issue, Atlassian must use reasonable efforts to correct the non-conformity. If Atlassian determines the remedy to be impracticable, either party may terminate the affected Subscription Term and Atlassian will refund any pre-paid, unused fees for the terminated portion."
+  },
+  {
+    "id": 4,
+    "question": "Under what conditions can either party terminate this agreement for cause?",
+    "expected_answer": "Either party may terminate the Agreement or a Subscription Term for cause if the other party: (a) fails to cure a material breach (including failure to pay fees) within 30 days after written notice; (b) ceases operation without a successor; or (c) seeks protection under bankruptcy, receivership, or comparable insolvency proceedings that are not dismissed within 60 days."
+  },
+  {
+    "id": 5,
+    "question": "How many days written notice is required to terminate this agreement for convenience, and are there any financial consequences?",
+    "expected_answer": "Customer may terminate the Agreement or any Subscription Term for convenience upon notice, with no minimum notice period specified for mid-term termination. No refunds are provided for convenience termination and any unpaid amounts for the current Subscription Term become immediately due and payable. Within 30 days of an initial Order, Customer may terminate for any reason and receive a full refund for that Product."
+  },
+  {
+    "id": 6,
+    "question": "What is the maximum aggregate liability cap defined in this agreement?",
+    "expected_answer": "Each party's entire aggregate liability arising out of or related to the Agreement must not exceed the amounts paid to Atlassian for the Products, Support, and Advisory Services giving rise to the liability during the twelve (12) months preceding the first event from which the liability arose. For Special Claims involving unauthorized disclosure of Customer Data caused by Atlassian's breach of its security obligations, the cap is the lesser of two times (2x) those amounts or US$5,000,000."
+  },
+  {
+    "id": 7,
+    "question": "Who retains ownership of intellectual property under this agreement?",
+    "expected_answer": "Customer owns all intellectual property and other rights in Customer Data and Customer Materials provided to Atlassian or used with the Products. Atlassian and its licensors retain all intellectual property and other rights in the Products, Support and Advisory Services deliverables, related source code, Atlassian technology, templates, formats, and dashboards, including any modifications or improvements to those."
+  },
+  {
+    "id": 8,
+    "question": "How long do confidentiality obligations remain in force after termination of the agreement?",
+    "expected_answer": "The confidentiality obligations under Section 16 are listed in Section 12.5 as surviving the expiration or termination of the Agreement. No fixed time limit is specified; the obligations persist indefinitely unless one of the exclusions in Section 16.3 applies, such as the information becoming publicly available through no fault of the receiving party or being independently developed without use of the disclosing party's Confidential Information."
+  },
+  {
+    "id": 9,
+    "question": "Which jurisdiction's laws govern this agreement and where must disputes be heard?",
+    "expected_answer": "For customers domiciled in Europe, the Middle East, or Africa, the Agreement is governed by the laws of the Republic of Ireland and disputes are heard in the courts of the Republic of Ireland. For all other customers, the Agreement is governed by the laws of the State of California, with jurisdiction and venue in the state and United States federal courts located in San Francisco, California. Conflicts of laws provisions do not apply."
+  },
+  {
+    "id": 10,
+    "question": "What is the defined process for resolving disputes between the parties under this agreement?",
+    "expected_answer": "The Agreement does not prescribe a pre-litigation mediation or arbitration process. Disputes are to be resolved through the applicable courts: the courts of the Republic of Ireland for EMEA-domiciled customers, or the state and federal courts in San Francisco, California for all other customers. Both parties submit to the personal jurisdiction of those courts. The United Nations Convention on the International Sale of Goods does not apply."
+  }
+]
