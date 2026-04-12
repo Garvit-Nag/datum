@@ -50,7 +50,7 @@ export function EvaluationSummaryTable({ run }: Props) {
 
         <TableBody>
           {run.results.map((row) => (
-            <TableRow key={row.id}>
+            <TableRow key={row.id} className="transition-colors duration-150 hover:bg-muted/60">
               <TableCell className="font-medium text-muted-foreground">{row.id}</TableCell>
               <TableCell className="text-sm">{row.question}</TableCell>
               <TableCell className="text-xs text-muted-foreground">

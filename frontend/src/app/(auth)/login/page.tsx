@@ -1,9 +1,19 @@
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import { LoginForm } from "@/features/auth/components/LoginForm";
 
-export default function LoginPage() {
+type Props = {
+  searchParams: Promise<{ error?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const hasOauthError = params.error === "oauth_failed";
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
-      <LoginForm />
-    </main>
+    <AuroraBackground>
+      <main className="flex min-h-screen items-center justify-center px-4 py-16">
+        <LoginForm hasOauthError={hasOauthError} />
+      </main>
+    </AuroraBackground>
   );
 }

@@ -1,15 +1,18 @@
 import { AuthGuard } from "@/shared/components/AuthGuard";
+import { AppNav } from "@/shared/components/AppNav";
 import { QueryPageClient } from "@/features/query/components/QueryPageClient";
 
 type Props = {
-  params: { docId: string };
+  params: Promise<{ docId: string }>;
 };
 
-export default function QueryPage({ params }: Props) {
+export default async function QueryPage({ params }: Props) {
+  const { docId } = await params;
   return (
     <AuthGuard>
+      <AppNav />
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <QueryPageClient docId={params.docId} docName="Contract Document" />
+        <QueryPageClient docId={docId} docName="Contract Document" />
       </main>
     </AuthGuard>
   );

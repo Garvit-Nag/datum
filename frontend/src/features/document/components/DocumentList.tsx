@@ -67,7 +67,7 @@ export function DocumentList() {
       </TableHeader>
       <TableBody>
         {documents.map((doc) => (
-          <TableRow key={doc.id}>
+          <TableRow key={doc.id} className="transition-all duration-200 hover:-translate-y-px hover:border-l-2 hover:border-l-cyan-500/40 hover:shadow-sm">
             <TableCell className="font-medium">{doc.filename}</TableCell>
             <TableCell>
               <StatusBadge status={doc.status} />

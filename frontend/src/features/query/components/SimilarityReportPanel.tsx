@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/table";
 
 const signalRowClass: Record<ScoreSignalType, string> = {
-  Strong: "bg-green-50",
-  Good: "bg-blue-50",
-  Weak: "bg-yellow-50",
-  Poor: "bg-red-50",
+  Strong: "bg-green-500/10",
+  Good: "bg-blue-500/10",
+  Weak: "bg-yellow-500/10",
+  Poor: "bg-red-500/10",
 };
 
 const signalBadgeClass: Record<ScoreSignalType, string> = {
@@ -67,7 +67,10 @@ export function SimilarityReportPanel({ chunks, isPending }: Props) {
             {chunks.map((chunk) => (
               <TableRow
                 key={chunk.rank}
-                className={cn(signalRowClass[chunk.signal])}
+                className={cn(
+                  signalRowClass[chunk.signal],
+                  "border-l-2 border-l-transparent transition-all duration-200 hover:border-l-cyan-400",
+                )}
               >
                 <TableCell className="font-medium">{chunk.rank}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">
