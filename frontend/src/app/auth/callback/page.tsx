@@ -8,19 +8,25 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const code = new URLSearchParams(window.location.search).get("code");
-
-    if (!code) {
-      router.replace("/login?error=oauth_failed");
-      return;
-    }
-
-    supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-      if (error) {
-        router.replace("/login?error=oauth_failed");
-      } else {
+    // Supabase SDK automatically parses the #access_token hash on init.
+    // Check if session is already available, otherwise wait for SIGNED_IN.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
         router.replace("/dashboard");
+        return;
       }
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          router.replace("/dashboard");
+        } else if (event === "SIGNED_OUT") {
+          router.replace("/login?error=oauth_failed");
+        }
+      });
+
+      return () => subscription.unsubscribe();
     });
   }, [router]);
 
