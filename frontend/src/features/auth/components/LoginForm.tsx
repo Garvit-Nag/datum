@@ -93,6 +93,7 @@ function SignInForm({ hasOauthError }: { hasOauthError: boolean }) {
         id="signin-password"
         label="Password"
         type="password"
+        autoComplete="current-password"
         registration={register("password")}
         error={errors.password?.message}
       />
@@ -155,6 +156,7 @@ function SignUpForm() {
         id="signup-password"
         label="Password"
         type="password"
+        autoComplete="new-password"
         registration={register("password")}
         error={errors.password?.message}
       />
@@ -162,6 +164,7 @@ function SignUpForm() {
         id="signup-confirm"
         label="Confirm password"
         type="password"
+        autoComplete="new-password"
         registration={register("confirmPassword")}
         error={errors.confirmPassword?.message}
       />
@@ -189,11 +192,12 @@ type FormFieldProps = {
   label: string;
   type: "email" | "password";
   placeholder?: string;
+  autoComplete?: string;
   registration: UseFormRegisterReturn;
   error: string | undefined;
 };
 
-function FormField({ id, label, type, placeholder, registration, error }: FormFieldProps) {
+function FormField({ id, label, type, placeholder, autoComplete, registration, error }: FormFieldProps) {
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id} className="text-sm font-medium">
@@ -203,6 +207,7 @@ function FormField({ id, label, type, placeholder, registration, error }: FormFi
         id={id}
         type={type}
         placeholder={placeholder}
+        autoComplete={autoComplete}
         className="transition-all duration-200 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/50"
         {...registration}
       />
