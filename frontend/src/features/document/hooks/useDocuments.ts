@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSupabaseSession } from "@/shared/providers/supabase-provider";
 import { documentKeys } from "./document-keys";
 import {
   deleteDocument,
@@ -9,9 +10,11 @@ import {
 } from "@/features/document/services/document-service";
 
 export function useDocuments() {
+  const { session } = useSupabaseSession();
   return useQuery({
     queryKey: documentKeys.list(),
     queryFn: fetchDocuments,
+    enabled: !!session,
     refetchInterval: (query) => {
       const docs = query.state.data;
       if (!docs) return false;
