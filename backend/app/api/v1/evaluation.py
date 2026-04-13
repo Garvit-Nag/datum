@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 
 from app.adapters.base.embedding import EmbeddingAdapterBase
 from app.adapters.base.llm import LlmAdapterBase
@@ -21,7 +22,7 @@ from app.services.query_service import QueryService
 router = APIRouter()
 
 
-@router.post("/run", response_model=EvaluationRunResponse)
+@router.post("/run")
 async def run_evaluation(
     body: EvaluationRequest,
     user: AuthUserType = Depends(get_admin_user),
@@ -30,7 +31,14 @@ async def run_evaluation(
     llm: LlmAdapterBase = Depends(get_llm_adapter),
     judge: LlmAdapterBase = Depends(get_judge_adapter),
     db=Depends(get_db_client),
-) -> EvaluationRunResponse:
+) -> StreamingResponse:
+    """Stream evaluation progress as newline-delimited JSON events.
+
+    Event shapes:
+        {"type":"start","total":N}
+        {"type":"progress","completed":C,"remaining":R,"row":{...EvaluationResultRow...}}
+        {"type":"done","run":{...EvaluationRunResponse...}}
+    """
     query_svc = QueryService(
         embedding=embedding,
         vector_store=vector_store,
@@ -42,7 +50,11 @@ async def run_evaluation(
         judge_llm=judge,
         evaluation_repo=EvaluationRepository(db),
     )
-    return await eval_svc.run_evaluation(user.user_id, body.document_id)
+
+    stream = eval_svc.run_evaluation_stream(
+        user.user_id, body.document_id, body.ground_truth_text
+    )
+    return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
 @router.get("/results", response_model=list[EvaluationRunResponse])

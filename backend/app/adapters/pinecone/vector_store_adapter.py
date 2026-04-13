@@ -37,6 +37,7 @@ class PineconeVectorStoreAdapter(VectorStoreAdapterBase):
                     "chunk_index": chunk.chunk_index,
                     "page": chunk.page,
                     "paragraph": chunk.paragraph,
+                    "text": chunk.text,
                     "preview": chunk.text[:120],
                 },
             }
@@ -66,6 +67,7 @@ class PineconeVectorStoreAdapter(VectorStoreAdapterBase):
         chunks: list[SimilarityChunk] = []
         for rank, match in enumerate(result.matches, start=1):
             meta = match.metadata or {}
+            full_text = str(meta.get("text", meta.get("preview", "")))
             chunks.append(
                 SimilarityChunk(
                     rank=rank,
@@ -73,7 +75,8 @@ class PineconeVectorStoreAdapter(VectorStoreAdapterBase):
                     paragraph=int(meta.get("paragraph", 0)),
                     score=round(float(match.score), 4),
                     signal=_score_signal(float(match.score)),
-                    preview=str(meta.get("preview", ""))[:120],
+                    text=full_text,
+                    preview=full_text[:120],
                 )
             )
         return chunks

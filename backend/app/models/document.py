@@ -30,6 +30,7 @@ class SimilarityChunk(BaseModel):
     paragraph: int
     score: float
     signal: Literal["Strong", "Good", "Weak", "Poor"]
+    text: str
     preview: str
 
 

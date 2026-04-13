@@ -12,19 +12,21 @@ class Settings(BaseSettings):
     PINECONE_API_KEY: str
     PINECONE_INDEX_NAME: str
 
-    OPENROUTER_API_KEY: str
-    OPENROUTER_ANSWER_MODEL: str = "minimax/minimax-m2.5"
-    OPENROUTER_JUDGE_MODEL: str = "google/gemma-4-27b-it:free"
+    GROQ_API_KEY: str
+    GROQ_ANSWER_MODEL: str = "llama-3.3-70b-versatile"
 
-    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
-    MAX_CHUNK_SIZE: int = 512
-    CHUNK_OVERLAP: int = 64
+    GEMINI_API_KEY: str = ""
+    GEMINI_JUDGE_MODEL: str = "gemini-2.5-flash"
+
+    EMBEDDING_MODEL: str = "BAAI/bge-large-en-v1.5"
+    EMBEDDING_QUERY_PREFIX: str = "Represent this sentence for searching relevant passages: "
+    MAX_CHUNK_SIZE: int = 350
+    CHUNK_OVERLAP: int = 120
     TOP_K_RESULTS: int = 5
 
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
 
     VECTOR_STORE_TYPE: Literal["pinecone"] = "pinecone"
-    LLM_PROVIDER: Literal["openrouter"] = "openrouter"
 
 
 settings = Settings()

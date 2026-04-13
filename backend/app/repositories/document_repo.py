@@ -42,7 +42,7 @@ class DocumentRepository:
             .maybe_single()
             .execute()
         )
-        return response.data
+        return response.data if response else None
 
     async def get_by_id(self, doc_id: str, user_id: str) -> dict | None:
         return await asyncio.to_thread(self._get_by_id_sync, doc_id, user_id)
@@ -96,6 +96,7 @@ class DocumentRepository:
         question: str,
         answer: str,
         chunks_json: list[dict],
+        chat_id: str,
     ) -> str:
         response = (
             self._client.table("query_history")
@@ -106,6 +107,7 @@ class DocumentRepository:
                     "question": question,
                     "answer": answer,
                     "chunks": chunks_json,
+                    "chat_id": chat_id,
                 }
             )
             .execute()
@@ -119,6 +121,7 @@ class DocumentRepository:
         question: str,
         answer: str,
         chunks_json: list[dict],
+        chat_id: str,
     ) -> str:
         return await asyncio.to_thread(
             self._insert_query_sync,
@@ -127,4 +130,92 @@ class DocumentRepository:
             question,
             answer,
             chunks_json,
+            chat_id,
         )
+
+    # ── Chats ──────────────────────────────────────────────────────────────────
+
+    def _create_chat_sync(self, user_id: str, document_id: str, title: str) -> dict:
+        response = (
+            self._client.table("chats")
+            .insert(
+                {
+                    "user_id": user_id,
+                    "document_id": document_id,
+                    "title": title,
+                }
+            )
+            .execute()
+        )
+        return response.data[0]
+
+    async def create_chat(self, user_id: str, document_id: str, title: str) -> dict:
+        return await asyncio.to_thread(self._create_chat_sync, user_id, document_id, title)
+
+    def _list_chats_sync(self, user_id: str) -> list[dict]:
+        response = (
+            self._client.table("chats")
+            .select("*, documents(filename, status)")
+            .eq("user_id", user_id)
+            .order("updated_at", desc=True)
+            .execute()
+        )
+        return response.data or []
+
+    async def list_chats(self, user_id: str) -> list[dict]:
+        return await asyncio.to_thread(self._list_chats_sync, user_id)
+
+    def _get_chat_sync(self, chat_id: str, user_id: str) -> dict | None:
+        response = (
+            self._client.table("chats")
+            .select("*, documents(filename, status)")
+            .eq("id", chat_id)
+            .eq("user_id", user_id)
+            .maybe_single()
+            .execute()
+        )
+        return response.data if response else None
+
+    async def get_chat(self, chat_id: str, user_id: str) -> dict | None:
+        return await asyncio.to_thread(self._get_chat_sync, chat_id, user_id)
+
+    def _list_chat_messages_sync(self, chat_id: str) -> list[dict]:
+        response = (
+            self._client.table("query_history")
+            .select("id, question, answer, chunks, created_at")
+            .eq("chat_id", chat_id)
+            .order("created_at", desc=False)
+            .execute()
+        )
+        return response.data or []
+
+    async def list_chat_messages(self, chat_id: str) -> list[dict]:
+        return await asyncio.to_thread(self._list_chat_messages_sync, chat_id)
+
+    def _update_chat_title_sync(self, chat_id: str, title: str) -> None:
+        self._client.table("chats").update({"title": title}).eq("id", chat_id).execute()
+
+    async def update_chat_title(self, chat_id: str, title: str) -> None:
+        await asyncio.to_thread(self._update_chat_title_sync, chat_id, title)
+
+    def _update_chat_timestamp_sync(self, chat_id: str) -> None:
+        self._client.table("chats").update(
+            {"updated_at": datetime.now(timezone.utc).isoformat()}
+        ).eq("id", chat_id).execute()
+
+    async def update_chat_timestamp(self, chat_id: str) -> None:
+        await asyncio.to_thread(self._update_chat_timestamp_sync, chat_id)
+
+    def _count_user_stats_sync(self, user_id: str) -> dict:
+        docs = self._client.table("documents").select("id", count="exact").eq("user_id", user_id).execute()
+        chats = self._client.table("chats").select("id", count="exact").eq("user_id", user_id).execute()
+        queries = self._client.table("query_history").select("id", count="exact").eq("user_id", user_id).execute()
+        return {
+            "total_documents": docs.count or 0,
+            "total_chats": chats.count or 0,
+            "total_queries": queries.count or 0,
+        }
+
+    async def count_user_stats(self, user_id: str) -> dict:
+        return await asyncio.to_thread(self._count_user_stats_sync, user_id)
+

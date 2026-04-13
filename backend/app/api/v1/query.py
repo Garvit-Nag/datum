@@ -33,4 +33,4 @@ async def run_query(
         llm=llm,
         document_repo=DocumentRepository(db),
     )
-    return await svc.answer(user.user_id, body.document_id, body.question)
+    return await svc.answer(user.user_id, body.document_id, body.question, body.chat_id)

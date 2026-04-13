@@ -6,16 +6,19 @@ from pydantic import BaseModel
 
 class EvaluationRequest(BaseModel):
     document_id: str
+    ground_truth_text: str
 
 
 class GroundTruthItem(BaseModel):
     id: int
+    category: str
     question: str
     expected_answer: str
 
 
 class EvaluationResultRow(BaseModel):
     id: int
+    category: str = ""
     question: str
     expected_answer: str
     system_answer: str

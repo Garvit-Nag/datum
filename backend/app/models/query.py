@@ -6,6 +6,7 @@ from app.models.document import SimilarityChunk
 class QueryRequest(BaseModel):
     document_id: str
     question: str = Field(..., min_length=1, max_length=500)
+    chat_id: str
 
 
 class QueryResponse(BaseModel):
