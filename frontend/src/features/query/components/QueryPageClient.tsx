@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function QueryPageClient({ docId, docName }: Props) {
-  const { mutate, data, isPending } = useAskQuestion(docId);
+  const { mutate, data, isPending } = useAskQuestion(docId, "");
 
   return (
     <div className="space-y-6">

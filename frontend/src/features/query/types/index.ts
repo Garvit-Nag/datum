@@ -6,6 +6,7 @@ export type SimilarityChunkType = {
   paragraph: number;
   score: number;
   signal: ScoreSignalType;
+  text: string;
   preview: string;
 };
 
