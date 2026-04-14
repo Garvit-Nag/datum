@@ -40,7 +40,7 @@ export function EvaluationSummaryTable({ run }: Props) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-8">#</TableHead>
-            <TableHead>Question</TableHead>
+            <TableHead className="w-36">Category</TableHead>
             <TableHead>Expected Answer</TableHead>
             <TableHead>System Answer</TableHead>
             <TableHead className="w-28">Verdict</TableHead>
@@ -52,7 +52,9 @@ export function EvaluationSummaryTable({ run }: Props) {
           {run.results.map((row) => (
             <TableRow key={row.id} className="transition-colors duration-150 hover:bg-muted/60">
               <TableCell className="font-medium text-muted-foreground">{row.id}</TableCell>
-              <TableCell className="text-sm">{row.question}</TableCell>
+              <TableCell className="text-xs font-medium text-foreground">
+                {row.category || "—"}
+              </TableCell>
               <TableCell className="text-xs text-muted-foreground">
                 {truncate(row.expected_answer)}
               </TableCell>
