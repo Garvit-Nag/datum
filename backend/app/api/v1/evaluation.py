@@ -5,7 +5,7 @@ from app.adapters.base.embedding import EmbeddingAdapterBase
 from app.adapters.base.llm import LlmAdapterBase
 from app.adapters.base.vector_store import VectorStoreAdapterBase
 from app.core.dependencies import (
-    get_admin_user,
+    get_current_user,
     get_db_client,
     get_embedding_adapter,
     get_judge_adapter,
@@ -25,7 +25,7 @@ router = APIRouter()
 @router.post("/run")
 async def run_evaluation(
     body: EvaluationRequest,
-    user: AuthUserType = Depends(get_admin_user),
+    user: AuthUserType = Depends(get_current_user),
     vector_store: VectorStoreAdapterBase = Depends(get_vector_store),
     embedding: EmbeddingAdapterBase = Depends(get_embedding_adapter),
     llm: LlmAdapterBase = Depends(get_llm_adapter),
@@ -59,7 +59,7 @@ async def run_evaluation(
 
 @router.get("/results", response_model=list[EvaluationRunResponse])
 async def get_evaluation_results(
-    _user: AuthUserType = Depends(get_admin_user),
+    _user: AuthUserType = Depends(get_current_user),
     db=Depends(get_db_client),
 ) -> list[EvaluationRunResponse]:
     rows = await EvaluationRepository(db).list_runs()

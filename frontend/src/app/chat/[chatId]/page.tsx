@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, use, useEffect, useRef } from "react";
 import { AuthGuard } from "@/shared/components/AuthGuard";
+import { Navbar } from "@/shared/components/Navbar";
 import { ChatSidebar } from "@/features/chat/components/ChatSidebar";
 import { ChatMessageList } from "@/features/chat/components/ChatMessageList";
 import { ChatInput } from "@/features/chat/components/ChatInput";
@@ -13,6 +14,9 @@ import {
   useSendMessage,
   useUpdateChatTitle,
 } from "@/features/chat/hooks/useChats";
+import { useSupabaseSession } from "@/shared/providers/supabase-provider";
+import { supabase } from "@/shared/lib/supabase";
+import { FileText, ExternalLink, Loader2 } from "lucide-react";
 
 type Props = {
   params: Promise<{ chatId: string }>;
@@ -24,6 +28,7 @@ export default function ChatPage({ params }: Props) {
 
   return (
     <AuthGuard>
+      <Navbar />
       <ChatPageContent
         chatId={chatId}
         newChatOpen={newChatOpen}
@@ -42,20 +47,41 @@ function ChatPageContent({
   newChatOpen: boolean;
   setNewChatOpen: (v: boolean) => void;
 }) {
+  const { user } = useSupabaseSession();
   const { data: chat, isLoading: chatLoading } = useChatDetail(chatId);
   const { data: messages, isLoading: msgsLoading } = useChatMessages(chatId);
   const { mutateAsync: sendMessage, isPending } = useSendMessage(
     chatId,
-    chat?.document_id ?? ""
+    chat?.document_id ?? "",
   );
   const { mutate: updateTitle } = useUpdateChatTitle();
 
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
+  const hasSentRef = useRef(false);
+  const [hasSent, setHasSent] = useState(false);
+
+  // PDF signed URL
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!chat?.document_id || !chat?.document_filename || !user?.id) return;
+    const path = `${user.id}/${chat.document_id}/${chat.document_filename}`;
+    supabase.storage
+      .from("documents")
+      .createSignedUrl(path, 3600)
+      .then(({ data }) => {
+        if (data?.signedUrl) setPdfUrl(data.signedUrl);
+      })
+      .catch(() => undefined);
+  }, [chat?.document_id, chat?.document_filename, user?.id]);
 
   async function handleSend(question: string) {
     if (!chat) return;
     setSendError(null);
+    if (!hasSentRef.current) {
+      hasSentRef.current = true;
+      setHasSent(true);
+    }
     setPendingQuestion(question);
     try {
       await sendMessage(question);
@@ -64,7 +90,8 @@ function ChatPageContent({
         updateTitle({ chatId, title });
       }
     } catch (err: unknown) {
-      const rawDetail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
+      const rawDetail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data
+        ?.detail;
       const detailMsg =
         typeof rawDetail === "string"
           ? rawDetail
@@ -82,6 +109,7 @@ function ChatPageContent({
             ? "The AI service is temporarily unavailable. Please try again shortly."
             : baseMsg;
       setSendError(msg);
+      setPendingQuestion(null);
     } finally {
       setPendingQuestion(null);
     }
@@ -89,10 +117,10 @@ function ChatPageContent({
 
   if (chatLoading || msgsLoading) {
     return (
-      <div className="flex h-screen">
+      <div className="flex h-[calc(100vh-3.5rem)]">
         <ChatSidebar activeChatId={chatId} onNewChat={() => setNewChatOpen(true)} />
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
         </div>
         <NewChatDialog open={newChatOpen} onClose={() => setNewChatOpen(false)} />
       </div>
@@ -102,21 +130,48 @@ function ChatPageContent({
   const docFilename = chat?.document_filename ?? "Document";
   const isReady = (chat?.document_status ?? "") === "ready";
   const messageList = messages ?? [];
-  const hasContent = messageList.length > 0 || pendingQuestion !== null || sendError !== null;
+  const hasContent =
+    messageList.length > 0 || pendingQuestion !== null || sendError !== null || hasSent;
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
       <ChatSidebar activeChatId={chatId} onNewChat={() => setNewChatOpen(true)} />
 
       <main className="flex flex-1 flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center gap-3 border-b border-border/50 px-4 py-3">
-          <h1 className="min-w-0 truncate text-sm font-medium text-foreground">
-            {chat?.title ?? "Chat"}
-          </h1>
-          <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-            {docFilename}
-          </span>
+        {/* Document header — clickable PDF pill */}
+        <div className="flex items-center gap-3 border-b border-border/40 bg-background/60 px-6 py-3 backdrop-blur-sm">
+          {pdfUrl ? (
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-2 rounded-full border border-border/60 bg-card/50 py-1.5 pl-2.5 pr-3.5 transition-all duration-200 hover:border-primary/40 hover:bg-card/80"
+            >
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 border border-primary/20">
+                <FileText className="h-2.5 w-2.5 text-primary" />
+              </span>
+              <span className="max-w-[420px] truncate text-[12px] font-medium text-foreground/85 group-hover:text-foreground">
+                {docFilename}
+              </span>
+              <ExternalLink className="h-3 w-3 text-muted-foreground/50 transition-colors group-hover:text-primary" />
+            </a>
+          ) : (
+            <div className="flex items-center gap-2 rounded-full border border-border/60 bg-card/50 py-1.5 pl-2.5 pr-3.5">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-muted/60">
+                <FileText className="h-2.5 w-2.5 text-muted-foreground" />
+              </span>
+              <span className="max-w-[420px] truncate text-[12px] font-medium text-foreground/70">
+                {docFilename}
+              </span>
+            </div>
+          )}
+
+          {!isReady && (
+            <span className="flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[10.5px] font-medium text-amber-500">
+              <Loader2 className="h-2.5 w-2.5 animate-spin" />
+              Processing
+            </span>
+          )}
         </div>
 
         {/* Messages or welcome */}
@@ -134,8 +189,8 @@ function ChatPageContent({
         {isReady ? (
           <ChatInput onSend={handleSend} isPending={isPending} />
         ) : (
-          <div className="border-t border-border/50 p-4 text-center text-sm text-muted-foreground">
-            Document is still processing. Please wait…
+          <div className="border-t border-border/40 bg-background/60 px-6 py-4 text-center text-[12px] text-muted-foreground backdrop-blur-sm">
+            Document is still processing. This usually takes 15–30 seconds…
           </div>
         )}
       </main>

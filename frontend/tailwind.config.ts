@@ -11,6 +11,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "monospace"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -46,13 +50,6 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      animation: {
-        "aurora-1": "aurora-1 20s ease-in-out infinite",
-        "aurora-2": "aurora-2 25s ease-in-out infinite",
-        "aurora-3": "aurora-3 15s ease-in-out infinite",
-        "card-enter": "card-enter 0.4s ease-out forwards",
-        shake: "shake 0.4s ease-in-out",
       },
     },
   },

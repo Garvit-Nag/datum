@@ -44,8 +44,3 @@ class StorageException(AppException):
 class UnauthorizedException(AppException):
     def __init__(self) -> None:
         super().__init__(401, "UNAUTHORIZED", "Invalid or missing authentication token")
-
-
-class ForbiddenException(AppException):
-    def __init__(self) -> None:
-        super().__init__(403, "FORBIDDEN", "You do not have permission to perform this action")

@@ -9,45 +9,85 @@ import { supabase } from "@/shared/lib/supabase";
 import { LoginSchema, SignUpSchema } from "../schemas/auth-schemas";
 import { resolveAuthError } from "../utils/auth-errors";
 import { GoogleButton } from "./GoogleButton";
-import { AuthDivider } from "./AuthDivider";
-import { SpotlightCard } from "@/components/ui/spotlight-card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { DatumLogo } from "@/shared/components/DatumLogo";
 import type { LoginSchemaType, SignUpSchemaType } from "../schemas/auth-schemas";
+
+type TabType = "signin" | "signup";
 
 type LoginFormProps = {
   hasOauthError?: boolean;
+  defaultTab?: TabType;
 };
 
-export function LoginForm({ hasOauthError = false }: LoginFormProps) {
+export function LoginForm({ hasOauthError = false, defaultTab = "signin" }: LoginFormProps) {
+  const [activeTab, setActiveTab] = useState<TabType>(defaultTab);
+
   return (
-    <SpotlightCard className="w-full max-w-md animate-card-enter rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Datum</h1>
-        <p className="mt-1 text-sm text-muted-foreground">MSA contract intelligence</p>
-      </div>
+    <div className="w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0c0d12] shadow-[0_24px_80px_-12px_rgba(0,0,0,0.85)] animate-scale-in">
+      <div className="px-8 pt-8 pb-7">
+        {/* Logo */}
+        <div className="flex justify-center">
+          <DatumLogo size={26} className="text-white" />
+        </div>
 
-      <GoogleButton />
+        {/* Heading */}
+        <h2 className="mt-5 text-center text-xl font-semibold tracking-tight text-white">
+          {activeTab === "signin" ? "Welcome back" : "Create an account"}
+        </h2>
+        <p className="mt-1.5 text-center text-[13px] text-white/45">
+          {activeTab === "signin"
+            ? "Sign in to continue to Datum."
+            : "Join Datum to query your contracts intelligently."}
+        </p>
 
-      <div className="my-5">
-        <AuthDivider />
-      </div>
+        {/* Google */}
+        <div className="mt-7">
+          <GoogleButton />
+        </div>
 
-      <Tabs defaultValue="signin">
-        <TabsList>
-          <TabsTrigger value="signin">Sign In</TabsTrigger>
-          <TabsTrigger value="signup">Sign Up</TabsTrigger>
-        </TabsList>
-        <TabsContent value="signin">
+        {/* OR divider */}
+        <div className="my-5 flex items-center gap-4">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/35">
+            or
+          </span>
+          <div className="h-px flex-1 bg-white/10" />
+        </div>
+
+        {activeTab === "signin" ? (
           <SignInForm hasOauthError={hasOauthError} />
-        </TabsContent>
-        <TabsContent value="signup">
+        ) : (
           <SignUpForm />
-        </TabsContent>
-      </Tabs>
-    </SpotlightCard>
+        )}
+
+        {/* Switch tab link */}
+        <p className="mt-6 text-center text-[12px] text-white/45">
+          {activeTab === "signin" ? (
+            <>
+              Don&apos;t have an account?{" "}
+              <button
+                type="button"
+                onClick={() => setActiveTab("signup")}
+                className="font-medium text-primary transition-colors hover:text-primary/80"
+              >
+                Sign up
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => setActiveTab("signin")}
+                className="font-medium text-primary transition-colors hover:text-primary/80"
+              >
+                Sign in
+              </button>
+            </>
+          )}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -77,40 +117,40 @@ function SignInForm({ hasOauthError }: { hasOauthError: boolean }) {
       return;
     }
     router.push("/dashboard");
+    router.refresh();
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <FormField
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
+      <DarkInput
         id="signin-email"
-        label="Email"
         type="email"
-        placeholder="you@example.com"
+        placeholder="Email address"
         registration={register("email")}
         error={errors.email?.message}
       />
-      <FormField
+      <DarkInput
         id="signin-password"
-        label="Password"
         type="password"
+        placeholder="Password"
         autoComplete="current-password"
         registration={register("password")}
         error={errors.password?.message}
       />
 
       {serverError && (
-        <p className={`text-xs text-destructive ${isShaking ? "animate-shake" : ""}`}>
+        <p className={`text-[11px] text-red-400 ${isShaking ? "animate-shake" : ""}`}>
           {serverError}
         </p>
       )}
 
-      <Button
+      <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(34,211,238,0.25)] active:scale-[0.98]"
+        className="mt-1 flex h-11 w-full items-center justify-center rounded-xl bg-primary text-[13px] font-semibold text-primary-foreground transition-all duration-200 hover:shadow-[0_0_28px_-4px_hsl(var(--primary)/0.55)] active:scale-[0.98] disabled:opacity-60"
       >
-        {isSubmitting ? "Signing in…" : "Sign in"}
-      </Button>
+        {isSubmitting ? "Signing in…" : "Sign in with Email"}
+      </button>
     </form>
   );
 }
@@ -144,84 +184,78 @@ function SignUpForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <FormField
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
+      <DarkInput
         id="signup-username"
-        label="Username"
         type="text"
-        placeholder="your_handle"
+        placeholder="Username (min 3 chars)"
         autoComplete="username"
         registration={register("username")}
         error={errors.username?.message}
       />
-      <FormField
+      <DarkInput
         id="signup-email"
-        label="Email"
         type="email"
-        placeholder="you@example.com"
+        placeholder="Email address"
         registration={register("email")}
         error={errors.email?.message}
       />
-      <FormField
+      <DarkInput
         id="signup-password"
-        label="Password"
         type="password"
+        placeholder="Password"
         autoComplete="new-password"
         registration={register("password")}
         error={errors.password?.message}
       />
-      <FormField
+      <DarkInput
         id="signup-confirm"
-        label="Confirm password"
         type="password"
+        placeholder="Confirm password"
         autoComplete="new-password"
         registration={register("confirmPassword")}
         error={errors.confirmPassword?.message}
       />
 
       {serverError && (
-        <p className={`text-xs text-destructive ${isShaking ? "animate-shake" : ""}`}>
+        <p className={`text-[11px] text-red-400 ${isShaking ? "animate-shake" : ""}`}>
           {serverError}
         </p>
       )}
-      {successMsg && <p className="text-xs text-green-500">{successMsg}</p>}
+      {successMsg && <p className="text-[11px] text-emerald-400">{successMsg}</p>}
 
-      <Button
+      <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(34,211,238,0.25)] active:scale-[0.98]"
+        className="mt-1 flex h-11 w-full items-center justify-center rounded-xl bg-primary text-[13px] font-semibold text-primary-foreground transition-all duration-200 hover:shadow-[0_0_28px_-4px_hsl(var(--primary)/0.55)] active:scale-[0.98] disabled:opacity-60"
       >
         {isSubmitting ? "Creating account…" : "Create account"}
-      </Button>
+      </button>
     </form>
   );
 }
 
-type FormFieldProps = {
+type DarkInputProps = {
   id: string;
-  label: string;
   type: "email" | "password" | "text";
-  placeholder?: string;
+  placeholder: string;
   autoComplete?: string;
   registration: UseFormRegisterReturn;
   error: string | undefined;
 };
 
-function FormField({ id, label, type, placeholder, autoComplete, registration, error }: FormFieldProps) {
+function DarkInput({ id, type, placeholder, autoComplete, registration, error }: DarkInputProps) {
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-sm font-medium">
-        {label}
-      </Label>
-      <Input
+    <div>
+      <input
         id={id}
         type={type}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="transition-all duration-200 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/50"
+        className="block h-11 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 text-[13px] text-white placeholder:text-white/30 transition-all duration-200 focus:border-primary/50 focus:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-primary/20"
         {...registration}
       />
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="mt-1 px-1 text-[11px] text-red-400">{error}</p>}
     </div>
   );
 }
