@@ -74,7 +74,7 @@ export function SimilarityReportPanel({ chunks, isPending }: Props) {
               >
                 <TableCell className="font-medium">{chunk.rank}</TableCell>
                 <TableCell className="text-xs text-muted-foreground">
-                  Page {chunk.page}, Para {chunk.paragraph}
+                  Page {chunk.page}
                 </TableCell>
                 <TableCell>{chunk.score.toFixed(2)}</TableCell>
                 <TableCell className={cn("text-xs", signalBadgeClass[chunk.signal])}>
