@@ -64,7 +64,6 @@ CLAUDE.md
 
 # Project docs and context files — not part of the submission
 docs/
-KPiTech_AI_Project_Brief_Garvit_v3.docx
 *.docx
 *.pdf
 
