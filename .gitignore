@@ -61,8 +61,15 @@ tmp/
 # Claude Code internals — not part of the submission
 .claude/
 CLAUDE.md
+
+# Project docs and context files — not part of the submission
 docs/
 KPiTech_AI_Project_Brief_Garvit_v3.docx
+*.docx
+*.pdf
 
-# MSA source document — uploaded to Supabase Storage at demo time, not committed
-"Atlassian Customer Agreement (Oct' 2025).pdf"
+# Root-level package-lock (only frontend/ has a valid one)
+package-lock.json
+
+# Old data directory (replaced by ground_truth.txt)
+data/
