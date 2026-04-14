@@ -1,31 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, BarChart3 } from "lucide-react";
 import type { MessageType } from "@/features/chat/types";
 import type { ScoreSignalType } from "@/features/query/types";
 import { cn } from "@/shared/lib/utils";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
-const signalRowClass: Record<ScoreSignalType, string> = {
-  Strong: "bg-green-500/10",
-  Good: "bg-blue-500/10",
-  Weak: "bg-yellow-500/10",
-  Poor: "bg-red-500/10",
+const signalBadge: Record<ScoreSignalType, string> = {
+  Strong: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
+  Good:   "bg-cyan-500/15 text-cyan-400 border-cyan-500/25",
+  Weak:   "bg-amber-500/15 text-amber-400 border-amber-500/25",
+  Poor:   "bg-red-500/15 text-red-400 border-red-500/25",
 };
 
-const signalTextClass: Record<ScoreSignalType, string> = {
-  Strong: "text-green-700 font-semibold",
-  Good: "text-blue-700 font-semibold",
-  Weak: "text-yellow-700 font-semibold",
-  Poor: "text-red-700 font-semibold",
+const signalBar: Record<ScoreSignalType, string> = {
+  Strong: "bg-emerald-500",
+  Good:   "bg-cyan-500",
+  Weak:   "bg-amber-500",
+  Poor:   "bg-red-500",
 };
 
 type Props = {
@@ -35,85 +27,118 @@ type Props = {
 
 export function ChatMessage({ message, isLatest = false }: Props) {
   const hasChunks = message.chunks && message.chunks.length > 0;
-
-  // Latest message starts expanded so the Similarity Report is always visible;
-  // older messages start collapsed to keep conversation history readable.
   const [showChunks, setShowChunks] = useState(isLatest);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 animate-fade-up">
       {/* User question */}
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-md bg-primary/15 px-4 py-3 text-sm text-foreground">
+        <div className="max-w-[78%] rounded-2xl rounded-br-md border border-primary/20 bg-primary/[0.08] px-4 py-2.5 text-[13.5px] leading-relaxed text-foreground">
           {message.question}
         </div>
       </div>
 
       {/* Assistant answer */}
       <div className="flex justify-start">
-        <div className="w-full max-w-[95%] space-y-2">
-          <div className="rounded-2xl rounded-bl-md bg-muted/60 px-4 py-3 text-sm leading-relaxed text-foreground">
+        <div className="w-full max-w-[94%] space-y-2.5">
+          {/* Answer bubble */}
+          <div className="rounded-2xl rounded-bl-md border border-border/50 bg-card/60 px-4 py-3.5 text-[13.5px] leading-relaxed text-foreground backdrop-blur-sm">
             <p className="whitespace-pre-wrap">{message.answer}</p>
           </div>
 
-          {/* Similarity Report */}
+          {/* Similarity report toggle */}
           {hasChunks && (
-            <>
+            <div>
               <button
                 onClick={() => setShowChunks((v) => !v)}
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                className="group flex items-center gap-1.5 rounded-lg border border-border/50 bg-card/40 px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-all hover:border-border hover:bg-card/70 hover:text-foreground"
               >
+                <BarChart3 className="h-3 w-3" />
+                {showChunks ? "Hide" : "Show"} Similarity Report
+                <span className="ml-1 rounded-full bg-muted/70 px-1.5 py-0.5 font-mono text-[9.5px]">
+                  {message.chunks.length}
+                </span>
                 {showChunks ? (
                   <ChevronUp className="h-3 w-3" />
                 ) : (
                   <ChevronDown className="h-3 w-3" />
                 )}
-                {showChunks ? "Hide" : "Show"} Similarity Report
               </button>
 
               {showChunks && (
-                <div className="rounded-lg border bg-card">
-                  <div className="border-b px-4 py-2">
-                    <p className="text-xs font-semibold text-foreground">Similarity Report</p>
-                    <p className="text-[11px] text-muted-foreground">Top {message.chunks.length} matching chunks</p>
+                <div className="mt-2 overflow-hidden rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm animate-fade-in">
+                  {/* Report title */}
+                  <div className="flex items-center justify-between border-b border-border/40 px-4 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="h-3 w-3 text-primary/70" />
+                      <p className="text-[11.5px] font-semibold text-foreground">
+                        Similarity Report
+                      </p>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/70">
+                      Top {message.chunks.length} matching chunks · cosine similarity
+                    </p>
                   </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-12">Rank</TableHead>
-                        <TableHead className="w-32">Location</TableHead>
-                        <TableHead className="w-16">Score</TableHead>
-                        <TableHead className="w-20">Signal</TableHead>
-                        <TableHead>Chunk Preview</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {message.chunks.map((chunk) => (
-                        <TableRow
-                          key={chunk.rank}
+
+                  {/* Column headers */}
+                  <div className="grid grid-cols-[40px_70px_72px_60px_1fr] gap-3 border-b border-border/30 bg-background/30 px-4 py-2 text-[9.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">
+                    <span>Rank</span>
+                    <span className="text-right">Score</span>
+                    <span>Signal</span>
+                    <span>Page</span>
+                    <span>Preview</span>
+                  </div>
+
+                  {/* Rows */}
+                  <div className="divide-y divide-border/25">
+                    {message.chunks.map((chunk) => (
+                      <div
+                        key={chunk.rank}
+                        className="group grid grid-cols-[40px_70px_72px_60px_1fr] items-center gap-3 px-4 py-2.5 transition-colors hover:bg-background/40"
+                      >
+                        {/* Rank */}
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border/50 bg-background/50 font-mono text-[10px] font-semibold text-muted-foreground">
+                          {chunk.rank}
+                        </span>
+
+                        {/* Score + bar */}
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="font-mono text-[11px] font-semibold tabular-nums text-foreground">
+                            {chunk.score.toFixed(3)}
+                          </span>
+                          <div className="h-1 w-14 overflow-hidden rounded-full bg-muted/60">
+                            <div
+                              className={cn("h-full rounded-full", signalBar[chunk.signal])}
+                              style={{ width: `${Math.min(chunk.score * 100, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Signal badge */}
+                        <span
                           className={cn(
-                            signalRowClass[chunk.signal],
-                            "border-l-2 border-l-transparent transition-all duration-200 hover:border-l-cyan-400",
+                            "inline-flex justify-center rounded-full border px-2 py-0.5 font-mono text-[9.5px] font-semibold",
+                            signalBadge[chunk.signal],
                           )}
                         >
-                          <TableCell className="font-medium">{chunk.rank}</TableCell>
-                          <TableCell className="text-xs text-muted-foreground">
-                            Page {chunk.page}
-                          </TableCell>
-                          <TableCell className="text-xs">{chunk.score.toFixed(2)}</TableCell>
-                          <TableCell className={cn("text-xs", signalTextClass[chunk.signal])}>
-                            {chunk.signal}
-                          </TableCell>
-                          <TableCell className="max-w-xs text-xs text-muted-foreground">
-                            <span className="line-clamp-2">{chunk.preview}</span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                          {chunk.signal}
+                        </span>
+
+                        {/* Page */}
+                        <span className="font-mono text-[10.5px] text-muted-foreground/80">
+                          p.{chunk.page}
+                        </span>
+
+                        {/* Preview */}
+                        <p className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground/85">
+                          {chunk.preview}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </div>

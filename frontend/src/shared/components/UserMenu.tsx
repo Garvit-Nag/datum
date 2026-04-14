@@ -31,7 +31,7 @@ export function UserMenu({ compact }: Props) {
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-    router.push("/login");
+    window.location.href = "/";
   }
 
   const displayName = getDisplayName(user);

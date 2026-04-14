@@ -16,13 +16,6 @@ def get_current_user(authorization: str = Header(...)) -> AuthUserType:
     return verify_supabase_jwt(token)
 
 
-def get_admin_user(user: AuthUserType = Depends(get_current_user)) -> AuthUserType:
-    from app.core.exceptions import ForbiddenException
-    if user.role != "admin":
-        raise ForbiddenException()
-    return user
-
-
 def get_vector_store(request: Request) -> VectorStoreAdapterBase:
     return request.app.state.vector_store
 
