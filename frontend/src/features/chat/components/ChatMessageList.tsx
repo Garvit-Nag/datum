@@ -21,8 +21,12 @@ export function ChatMessageList({ messages, pendingQuestion, errorMessage }: Pro
   return (
     <ScrollArea className="flex-1 px-4 py-4">
       <div className="mx-auto max-w-3xl space-y-6">
-        {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
+        {messages.map((msg, i) => (
+          <ChatMessage
+            key={msg.id}
+            message={msg}
+            isLatest={i === messages.length - 1 && !pendingQuestion}
+          />
         ))}
 
         {/* Optimistic: user's question appears immediately */}
