@@ -34,7 +34,7 @@ const FEATURES = [
   {
     icon: BarChart3,
     title: "Similarity Report",
-    body: "Every answer ships with the top-5 matching chunks ranked by cosine score — strong, good, weak, or poor signal.",
+    body: "Every answer ships with the top-5 matching chunks ranked by cosine score strong, good, weak, or poor signal.",
     iconBg: "bg-emerald-500/10 border border-emerald-500/20",
     iconColor: "text-emerald-400",
   },
@@ -97,7 +97,7 @@ export default function LandingPage() {
           {/* Subhead */}
           <p className="mt-6 max-w-xl text-balance text-base leading-relaxed text-muted-foreground animate-fade-up delay-150">
             Upload any MSA, ask questions in plain English, and get evidence-backed answers
-            grounded in the document — with a similarity report on every response.
+            grounded in the document with a similarity report on every response.
           </p>
 
           {/* CTAs */}
@@ -163,10 +163,10 @@ export default function LandingPage() {
           <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-card/60 px-8 py-12 text-center backdrop-blur-sm">
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-transparent to-violet-500/5" />
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Stop hunting through 80-page MSAs.
+              Stop hunting through MSAs.
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Upload your first document in under 30 seconds.
+              Upload your first document.
             </p>
             <div className="mt-6 flex justify-center">
               <button
