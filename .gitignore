@@ -73,3 +73,6 @@ package-lock.json
 
 # Old data directory (replaced by ground_truth.txt)
 data/
+
+# Tests — not part of submission
+backend/tests/
