@@ -1,39 +1,54 @@
-C: Payment Terms
-Q: Within how many days of an initial Order may a Customer terminate the Subscription Term and receive a full refund?
-A: Under Section 10.3 (Return Policy), within thirty (30) days of its initial Order for a Product, Customer may terminate the Subscription Term for that Product for any or no reason by providing notice to Atlassian, and Atlassian will refund the amount paid for that Product and any associated Support.
+ C: Payment Terms
+  Q: Within how many days of an initial Order may a Customer terminate the Subscription Term and receive a full refund?                         
+  A: Under Section 10.3 (Return Policy), within thirty (30) days of its initial Order for a Product, Customer may terminate the Subscription
+  Term for that Product for any or no reason by providing notice to Atlassian, and Atlassian will refund the amount paid for that Product and   
+  any associated Support.
 
-C: Late Payment Penalty
-Q: What action may Atlassian take if a Customer's payment is overdue, and how many days' written notice must it give first?
-A: Under Section 10.4 (Suspension for Non-payment), Atlassian may suspend Customer's rights to use Products or receive Support or Advisory Services if any amount owed is overdue, but only after giving Customer no fewer than ten (10) days' written notice of the overdue amount.
+  C: Late Payment Penalty
+  Q: What action may Atlassian take if a Customer's payment is overdue, and how many days' written notice must it give first?
+  A: Under Section 10.4 (Suspension for Non-payment), Atlassian may suspend Customer's rights to use Products or receive Support or Advisory    
+  Services if any amount owed is overdue, but only after giving Customer no fewer than ten (10) days' written notice of the overdue amount.     
 
-C: Delivery Deadline Penalty
-Q: If Atlassian breaches a Performance Warranty, within how many days must the Customer submit a warranty claim to receive a remedy?
-A: If Atlassian breaches a Performance Warranty, Customer must make a reasonably detailed warranty claim within thirty (30) days of discovering the breach to be eligible for a remedy under the Agreement.
+  C: Delivery Deadline Penalty
+  Q: If Atlassian breaches a Performance Warranty, within how many days must the Customer submit a warranty claim to receive a remedy?
+  A: If Atlassian breaches a Performance Warranty, Customer must make a reasonably detailed warranty claim within thirty (30) days of
+  discovering the breach to be eligible for a remedy under the Agreement.
 
-C: Termination Conditions
-Q: Under what conditions can either party terminate the Agreement or a Subscription Term for cause under Section 12.3?
-A: Under Section 12.3 (Termination for Cause), either party may terminate the Agreement or a Subscription Term if the other party fails to cure a material breach (including failure to pay fees) within 30 days after written notice, or if the other party becomes subject to bankruptcy or insolvency proceedings not dismissed within 60 days.
+  C: Termination Conditions
+  Q: Under what conditions can either party terminate the Agreement or a Subscription Term for cause under Section 12.3?
+  A: Under Section 12.3 (Termination for Cause), either party may terminate the Agreement or a Subscription Term if the other party fails to    
+  cure a material breach (including failure to pay fees) within 30 days after written notice, or if the other party becomes subject to
+  bankruptcy or insolvency proceedings not dismissed within 60 days.
 
-C: Termination Notice Period
-Q: How many days' written notice must a party provide before the other party may terminate for a material breach?
-A: Under Section 12.3 (Termination for Cause), a party must provide 30 days' written notice of the material breach, and the breaching party has that 30-day period to cure the breach before termination becomes effective.
+  C: Termination Notice Period
+  Q: How many days' written notice must a party provide before the other party may terminate for a material breach?
+  A: Under Section 12.3 (Termination for Cause), a party must provide 30 days' written notice of the material breach, and the breaching party   
+  has that 30-day period to cure the breach before termination becomes effective.
 
-C: Limitation of Liability
-Q: What is Atlassian's aggregate liability cap for Special Claims, and how is that cap calculated?
-A: Under Section 14.4 (Special Claims), Atlassian's aggregate liability for Special Claims is the lesser of (a) two times (2x) the amounts paid to Atlassian for the relevant Products, Support and Advisory Services in the twelve (12) months preceding the first event, or (b) US$5,000,000.
+  C: Limitation of Liability
+  Q: What is Atlassian's aggregate liability cap for Special Claims, and how is that cap calculated?
+  A: Under Section 14.4 (Special Claims), Atlassian's aggregate liability for Special Claims is the lesser of (a) two times (2x) the amounts    
+  paid to Atlassian for the relevant Products, Support and Advisory Services in the twelve (12) months preceding the first event, or (b)        
+  US$5,000,000.
 
-C: Intellectual Property
-Q: As between the parties, who owns the intellectual property and other rights in Customer Data and Customer Materials?
-A: As between the parties, Customer owns all intellectual property and other rights in Customer Data and Customer Materials. Atlassian does not acquire any ownership interest in Customer Data or Customer Materials under the Agreement.
+  C: Intellectual Property
+  Q: As between the parties, who owns the intellectual property and other rights in Customer Data and Customer Materials?
+  A: As between the parties, Customer owns all intellectual property and other rights in Customer Data and Customer Materials. Atlassian does   
+  not acquire any ownership interest in Customer Data or Customer Materials under the Agreement.
 
-C: Confidentiality Duration
-Q: How long do the confidentiality obligations under the Agreement remain in force after the Agreement terminates or expires?
-A: The confidentiality obligations under the Agreement survive its termination or expiry and remain in force for as long as the confidential information remains confidential, ensuring ongoing protection of each party's proprietary information.
+  C: Confidentiality Duration
+  Q: How long do the confidentiality obligations under the Agreement remain in force after the Agreement terminates or expires?
+  A: The confidentiality obligations under the Agreement survive its termination or expiry and remain in force for as long as the confidential  
+  information remains confidential, ensuring ongoing protection of each party's proprietary information.
 
-C: Governing Law
-Q: Which jurisdiction's laws govern the Agreement for a Customer domiciled in the United States?
-A: Under Section 20.4 (Governing Law, Jurisdiction and Venue), for Customers domiciled outside Europe, the Middle East, and Africa, the Agreement is governed by the laws of the State of California, with jurisdiction and venue in the state and United States federal courts located in San Francisco, California.
+  C: Governing Law
+  Q: Which jurisdiction's laws govern the Agreement for a Customer domiciled in the United States?
+  A: Under Section 20.4 (Governing Law, Jurisdiction and Venue), for Customers domiciled outside Europe, the Middle East, and Africa, the       
+  Agreement is governed by the laws of the State of California, with jurisdiction and venue in the state and United States federal courts       
+  located in San Francisco, California.
 
-C: Dispute Resolution
-Q: For Customers based in the United States, in which courts must disputes under the Agreement be filed?
-A: Under Section 20.4 (Governing Law, Jurisdiction and Venue), disputes for US-based Customers must be brought exclusively in the state and United States federal courts located in San Francisco, California, and each party irrevocably consents to the personal jurisdiction of those courts.
+  C: Dispute Resolution
+  Q: For Customers based in the United States, in which courts must disputes under the Agreement be filed?
+  A: Under Section 20.4 (Governing Law, Jurisdiction and Venue), disputes for US-based Customers must be brought exclusively in the state and   
+  United States federal courts located in San Francisco, California, and each party irrevocably consents to the personal jurisdiction of those  
+  courts.

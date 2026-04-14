@@ -215,6 +215,31 @@ export function EvaluationPageClient() {
     setPdfFile(null);
   }
 
+  async function handleAutoLoad() {
+    try {
+      const res = await fetch("/ground_truth.txt");
+      if (!res.ok) throw new Error("File not found");
+      const text = await res.text();
+      setPastedText(text);
+      setInputMode("paste");
+      const { pairs, error } = parseGroundTruth(text);
+      if (error) {
+        setValidated(null);
+        setValidationError(error);
+        return;
+      }
+      if (pairs.length === 0) {
+        setValidated(null);
+        setValidationError("No valid Q&A pairs found in ground_truth.txt.");
+        return;
+      }
+      setValidationError(null);
+      setValidated({ count: pairs.length, text });
+    } catch {
+      setValidationError("Failed to load /ground_truth.txt");
+    }
+  }
+
   // ── Handlers: document upload ─────────────────────────────
   async function handleDocUpload() {
     if (!pdfFile) return;
@@ -391,15 +416,26 @@ export function EvaluationPageClient() {
                   </div>
                 )}
 
-                <Button
-                  onClick={handleValidate}
-                  disabled={inputMode === "paste" ? !pastedText.trim() : !uploadedText.trim()}
-                  className="gap-2"
-                  size="sm"
-                >
-                  Validate Q&A
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleValidate}
+                    disabled={inputMode === "paste" ? !pastedText.trim() : !uploadedText.trim()}
+                    className="gap-2"
+                    size="sm"
+                  >
+                    Validate Q&A
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    onClick={handleAutoLoad}
+                    variant="secondary"
+                    className="gap-2"
+                    size="sm"
+                    disabled={isRunning}
+                  >
+                    Auto-Load ground_truth.txt
+                  </Button>
+                </div>
               </>
             )}
           </div>
