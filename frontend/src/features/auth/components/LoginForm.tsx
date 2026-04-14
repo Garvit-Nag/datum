@@ -124,7 +124,7 @@ function SignUpForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignUpSchemaType>({ resolver: zodResolver(SignUpSchema) });
+  } = useForm<SignUpSchemaType>({ resolver: zodResolver(SignUpSchema), mode: "onChange" });
 
   async function onSubmit(data: SignUpSchemaType) {
     setServerError(null);
@@ -132,6 +132,7 @@ function SignUpForm() {
     const { error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
+      options: { data: { username: data.username } },
     });
     if (error) {
       setServerError(resolveAuthError(error, "signup"));
@@ -144,6 +145,15 @@ function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <FormField
+        id="signup-username"
+        label="Username"
+        type="text"
+        placeholder="your_handle"
+        autoComplete="username"
+        registration={register("username")}
+        error={errors.username?.message}
+      />
       <FormField
         id="signup-email"
         label="Email"
@@ -190,7 +200,7 @@ function SignUpForm() {
 type FormFieldProps = {
   id: string;
   label: string;
-  type: "email" | "password";
+  type: "email" | "password" | "text";
   placeholder?: string;
   autoComplete?: string;
   registration: UseFormRegisterReturn;

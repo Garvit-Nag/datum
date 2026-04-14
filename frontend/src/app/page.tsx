@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { LandingNav } from "@/shared/components/LandingNav";
 
 export default function LandingPage() {
   return (
     <AuroraBackground>
+      <LandingNav />
+
       <main className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
         {/* Badge */}
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-cyan-400 backdrop-blur-sm">

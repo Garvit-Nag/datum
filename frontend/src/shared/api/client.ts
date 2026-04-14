@@ -1,6 +1,6 @@
 import axios from "axios";
 import { clientEnv } from "@/shared/utils/client-env";
-import { supabase } from "@/shared/lib/supabase";
+import { supabase, getFreshAccessToken } from "@/shared/lib/supabase";
 
 export const apiClient = axios.create({
   baseURL: clientEnv.NEXT_PUBLIC_API_BASE_URL,
@@ -8,9 +8,9 @@ export const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(async (config) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.access_token) {
-    config.headers.Authorization = `Bearer ${session.access_token}`;
+  const token = await getFreshAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
@@ -19,8 +19,19 @@ apiClient.interceptors.response.use(
   (res) => res,
   async (error) => {
     if (error.response?.status === 401) {
-      await supabase.auth.signOut();
-      window.location.href = "/login";
+      // Don't nuke the Supabase session — the 401 might be a transient
+      // backend issue (token not propagated yet, JWT config mismatch, etc.).
+      // Only sign out if the Supabase session itself is truly gone.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = "/login";
+      } else {
+        console.warn(
+          "Backend returned 401 but Supabase session is still valid. " +
+          "The backend may not be accepting the token correctly.",
+          error.config?.url,
+        );
+      }
     }
     return Promise.reject(error);
   },

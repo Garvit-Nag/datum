@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useDocuments, useDeleteDocument } from "@/features/document/hooks/useDocuments";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,24 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { DocumentStatusType } from "@/features/document/types";
-
-function StatusBadge({ status }: { status: DocumentStatusType }) {
-  const variantMap = {
-    ready: "success",
-    processing: "warning",
-    failed: "danger",
-  } as const;
-  return <Badge variant={variantMap[status]}>{status}</Badge>;
-}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
   });
 }
 
@@ -50,7 +36,7 @@ export function DocumentList() {
   if (!documents?.length) {
     return (
       <div className="rounded-md border border-dashed py-12 text-center text-sm text-muted-foreground">
-        No documents yet. Upload an MSA to get started.
+        No documents yet. Create a new chat to upload one.
       </div>
     );
   }
@@ -60,7 +46,6 @@ export function DocumentList() {
       <TableHeader>
         <TableRow>
           <TableHead>Filename</TableHead>
-          <TableHead>Status</TableHead>
           <TableHead>Uploaded</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -69,29 +54,16 @@ export function DocumentList() {
         {documents.map((doc) => (
           <TableRow key={doc.id} className="transition-all duration-200 hover:-translate-y-px hover:border-l-2 hover:border-l-cyan-500/40 hover:shadow-sm">
             <TableCell className="font-medium">{doc.filename}</TableCell>
-            <TableCell>
-              <StatusBadge status={doc.status} />
-            </TableCell>
             <TableCell className="text-muted-foreground">{formatDate(doc.created_at)}</TableCell>
             <TableCell className="text-right">
-              <div className="flex justify-end gap-2">
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  disabled={doc.status !== "ready"}
-                >
-                  <Link href={`/query/${doc.id}`}>Query</Link>
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  disabled={isDeleting}
-                  onClick={() => deleteDoc(doc.id)}
-                >
-                  Delete
-                </Button>
-              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={isDeleting}
+                onClick={() => deleteDoc(doc.id)}
+              >
+                Delete
+              </Button>
             </TableCell>
           </TableRow>
         ))}
