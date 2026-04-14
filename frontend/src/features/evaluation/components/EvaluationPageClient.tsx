@@ -45,24 +45,38 @@ function getEvalErrorMessage(error: unknown): string {
 }
 
 type ParsedPairType = { category: string; question: string; answer: string };
+type GroundTruthParseResultType = { pairs: ParsedPairType[]; error: string | null };
 
-function parseGroundTruth(text: string): ParsedPairType[] {
+function parseGroundTruth(text: string): GroundTruthParseResultType {
   const blocks = text.trim().split(/\n\s*\n/);
   const pairs: ParsedPairType[] = [];
-  for (const block of blocks) {
-    const lines = block.trim().split("\n");
+
+  for (const [i, block] of blocks.entries()) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+    const lines = trimmed.split("\n");
     const cLine = lines.find((l) => l.trim().toUpperCase().startsWith("C:"));
     const qLine = lines.find((l) => l.trim().toUpperCase().startsWith("Q:"));
     const aLine = lines.find((l) => l.trim().toUpperCase().startsWith("A:"));
-    if (qLine && aLine) {
+
+    if (cLine && qLine && aLine) {
       pairs.push({
-        category: cLine ? cLine.split(":").slice(1).join(":").trim() : "",
+        category: cLine.split(":").slice(1).join(":").trim(),
         question: qLine.split(":").slice(1).join(":").trim(),
         answer: aLine.split(":").slice(1).join(":").trim(),
       });
+    } else if (cLine || qLine || aLine) {
+      const missing = (
+        [!cLine && "C:", !qLine && "Q:", !aLine && "A:"] as (string | false)[]
+      ).filter((x): x is string => !!x);
+      return {
+        pairs: [],
+        error: `Block ${i + 1} is missing: ${missing.join(", ")}. Every block must have a C: (category), Q: (question), and A: (answer) line.`,
+      };
     }
   }
-  return pairs;
+
+  return { pairs, error: null };
 }
 
 export function EvaluationPageClient() {
@@ -115,11 +129,16 @@ export function EvaluationPageClient() {
 
   function handleValidate() {
     const raw = inputMode === "paste" ? pastedText : uploadedText;
-    const pairs = parseGroundTruth(raw);
+    const { pairs, error } = parseGroundTruth(raw);
+    if (error) {
+      setValidated(null);
+      setValidationError(error);
+      return;
+    }
     if (pairs.length === 0) {
       setValidated(null);
       setValidationError(
-        "No valid Q&A pairs found. Make sure each block has a line starting with Q: and a line starting with A:, separated by blank lines."
+        "No valid Q&A pairs found. Each block needs C:, Q:, and A: lines separated by a blank line."
       );
       return;
     }
