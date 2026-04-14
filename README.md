@@ -1,6 +1,6 @@
 # Datum — MiniRAG: MSA Contract Q&A System
 
-A Retrieval-Augmented Generation pipeline that lets authenticated users upload a Master Service Agreement, ask plain-English questions, and receive answers backed by a scored Similarity Report. An admin-only Evaluation Layer runs all 10 ground truth questions through the pipeline and judges system answers using a separate LLM.
+A Retrieval-Augmented Generation pipeline that lets authenticated users upload a Master Service Agreement, ask plain-English questions, and receive answers backed by a scored Similarity Report. An Evaluation Layer runs all 10 ground truth questions through the pipeline and judges system answers using a separate LLM.
 
 ---
 
@@ -119,16 +119,22 @@ A: ...
 1. Run `supabase/migrations/001_initial.sql` in the SQL Editor
 2. Run `supabase/migrations/002_add_chats.sql` in the SQL Editor
 3. Create a Storage bucket named **`documents`** (private)
-4. To create an admin user: sign up, then in Dashboard → Authentication → Users → Edit → add `{"role": "admin"}` to User Metadata
 
 ### 2. Environment variables
 
+The root `.env.example` is split into two sections — a **Backend** block and a **Frontend** block. Copy each block into its own file:
+
 ```bash
+# Backend — copy the "Backend" section of .env.example into backend/.env
 cp .env.example backend/.env
-# Fill in all values — see .env.example for every required key
+
+# Frontend — copy the "Frontend" section into frontend/.env.local
+cp frontend/.env.local.example frontend/.env.local
 ```
 
-Key variables:
+Then fill in every value. After copying, remove the frontend block from `backend/.env` (and vice versa) so each file only holds its own keys.
+
+**Backend (`backend/.env`)**
 
 | Variable | Description |
 |---|---|
@@ -138,17 +144,60 @@ Key variables:
 | `PINECONE_API_KEY` | Pinecone API key |
 | `PINECONE_INDEX_NAME` | Name of your 1024-dim Pinecone index |
 | `GROQ_API_KEY` | Groq API key |
+| `GROQ_ANSWER_MODEL` | Defaults to `llama-3.3-70b-versatile` |
 | `GEMINI_API_KEY` | Google Gemini API key |
-| `NEXT_PUBLIC_SUPABASE_URL` | Same Supabase URL (frontend) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key (frontend) |
+| `GEMINI_JUDGE_MODEL` | Defaults to `gemini-2.5-flash` |
+| `EMBEDDING_MODEL` | Defaults to `BAAI/bge-large-en-v1.5` |
+| `MAX_CHUNK_SIZE` | Token window per chunk (default `350`) |
+| `CHUNK_OVERLAP` | Token overlap between chunks (default `120`) |
+| `TOP_K_RESULTS` | Chunks returned per query (default `5`) |
+| `CORS_ORIGINS` | JSON list, e.g. `["http://localhost:3000"]` |
+
+**Frontend (`frontend/.env.local`)**
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_API_BASE_URL` | FastAPI base URL, e.g. `http://localhost:8000` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Same Supabase URL as the backend |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon (public) key |
 
 ### 3. Backend
+
+Pick **one** of the two options below.
+
+**Option A — Docker (recommended, zero setup)**
 
 ```bash
 docker compose up --build
 # API: http://localhost:8000
 # Swagger: http://localhost:8000/docs
 ```
+
+The image installs a CPU-only PyTorch wheel and pre-downloads the BGE embedding model at build time, so the first query after startup doesn't stall on HuggingFace.
+
+**Option B — Native (Poetry + uvicorn)**
+
+Use this when you want hot-reload, faster iteration, or don't have Docker. Poetry creates and manages the virtualenv for you — no need to run `python -m venv` yourself.
+
+```bash
+cd backend
+
+# 1. Install CPU-only PyTorch first, or sentence-transformers will pull the
+#    ~2 GB CUDA build you don't need.
+poetry run pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# 2. Install the rest of the dependencies (prod only — skip dev tools).
+poetry install --only main
+
+# 3. Run the API with hot-reload.
+poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# API: http://localhost:8000
+# Swagger: http://localhost:8000/docs
+```
+
+The first query will briefly stall (~10–20s) while the BGE-large model downloads into `~/.cache/huggingface`. Subsequent runs are instant.
+
+If you prefer a plain `venv` without Poetry, run `poetry export -f requirements.txt --output requirements.txt --only main` once, then `python -m venv .venv && .venv/Scripts/activate && pip install -r requirements.txt` (use `source .venv/bin/activate` on macOS/Linux) before the same `uvicorn` command above.
 
 ### 4. Frontend
 
@@ -157,14 +206,4 @@ cd frontend
 npm install
 npm run dev
 # App: http://localhost:3000
-```
-
----
-
-## Running Backend Tests
-
-```bash
-cd backend
-poetry install
-poetry run pytest
 ```
